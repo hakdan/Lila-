@@ -1,0 +1,13 @@
+{
+  "name": "vilkan-headless",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vilkan Creative - static frontend connected to a Wix Headless project.",
+  "scripts": {
+    "preview": "wix preview",
+    "release": "wix release"
+  },
+  "devDependencies": {
+    "@wix/cli": "^1.0.0"
+  }
+}

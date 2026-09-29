@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vilkan Creative | Hayallerini gerçeğe dönüştür</title>
+<meta name="description" content="Vilkan Creative; dijital ajans, yazılım ve yapay zeka hizmetlerini tek çatı altında sunar. Türkiye ve Estonya'da hizmet veriyoruz.">
+<link rel="canonical" href="https://www.vilkan.com.tr/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:site_name" content="Vilkan Creative">
+<meta property="og:title" content="Vilkan Creative | Hayallerini gerçeğe dönüştür">
+<meta property="og:description" content="Vilkan Creative; dijital ajans, yazılım ve yapay zeka hizmetlerini tek çatı altında sunar. Türkiye ve Estonya'da hizmet veriyoruz.">
+<meta property="og:url" content="https://www.vilkan.com.tr/">
+<meta property="og:image" content="https://www.vilkan.com.tr/vilkan-logo.png">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="stage" aria-hidden="true"></canvas>
+<canvas id="liquid" aria-hidden="true"></canvas>
+<div class="veil" aria-hidden="true"></div>
+
+<header class="bar">
+  <a class="brand" href="index.html" aria-label="Vilkan Creative, ana sayfa"><img src="vilkan-logo.png" alt="Vilkan Creative" width="720" height="62"></a>
+  <button class="menu-btn" id="menuBtn" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="navMenu"><span></span><span></span><span></span></button>
+  <nav class="pill" id="navMenu" aria-label="Ana menü">
+    <a href="index.html" aria-current="page">Ana Sayfa</a>
+    <a class="ai" href="yapay-zeka.html">Yapay Zeka</a>
+    <a href="ajans.html">Ajans</a>
+    <a href="yazilim.html">Yazılım</a>
+    <a href="iletisim.html">İletişim</a>
+  </nav>
+  <a class="cta" href="iletisim.html">Randevu iste</a>
+</header>
+
+<main>
+    <div class="hero-pin" id="heroPin">
+      <div class="hero-sticky">
+        <div class="hero-copy" id="heroCopy">
+          <h1 tabindex="-1">Hayallerini<br>gerçeğe dönüştür.</h1>
+          <p>Dijital ajans, yazılım ve yapay zeka. Hepsi tek çatı altında.</p>
+          <div class="actions">
+            <a class="btn solid" href="iletisim.html">Randevu iste</a>
+            <a class="btn" href="yapay-zeka.html">Yapay zekayla tanış</a>
+          </div>
+        </div>
+        <a class="glass fcard l" id="fcL" href="ajans.html"><span class="fl">Ajans</span><strong>Tasarımdan üretime, üretimden teslimata her şey tek çatı altında.</strong><i class="arr" aria-hidden="true">↗</i></a>
+        <a class="glass fcard r" id="fcR" href="yapay-zeka.html"><span class="fl">Yapay Zeka</span><strong>Asistanla konuş</strong><i class="arr" aria-hidden="true">↗</i><em class="fbar"></em></a>
+        <div class="hero-cap" id="capA">Her şey bir fikirle başlar.</div>
+        <div class="hero-cap" id="capB">Sonra büyür.</div>
+        <div class="hint" id="hint">Aşağı kaydır. Fareni gezdir.</div>
+      </div>
+    </div>
+
+    <div class="pin ex" id="exPin" role="img" aria-label="Bir dijital ürünün katmanları kaydırdıkça birbirinden ayrılıyor: arayüz, kod, yapay zeka, veri, altyapı.">
+      <div class="pin-sticky">
+        <canvas id="exCanvas" aria-hidden="true"></canvas>
+        <h2 class="ex-h"><span>Bir tasarım işi.</span><span class="gold" id="exH2">Bir mühendislik işi.</span></h2>
+        <div class="ex-info" id="exInfo">
+          <svg class="ex-ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="bgc" cx="60" cy="60" r="52"></circle><circle class="fg" id="exRing" cx="60" cy="60" r="52"></circle></svg>
+          <div class="ex-title" id="exTitle">Arayüz</div>
+          <div class="ex-line"><i id="exKnob"></i></div>
+          <div class="ex-desc" id="exDesc"></div>
+        </div>
+        <div class="ex-num" id="exNum">01</div>
+      </div>
+    </div>
+
+    <div class="light-block" id="lightBlock">
+      <div class="wrap light-wrap">
+        <span class="tag dark">Kimlik</span>
+        <h2 class="light-h">Karanlıkta da, aydınlıkta da aynı işi yaparız.</h2>
+        <p class="light-p">Fareni gezdir, noktalar sana doğru toplansın. Tıkla, dalga yayılsın.</p>
+      </div>
+      <div class="light-stage" id="lightStage"><canvas id="lightCanvas" aria-label="Vilkan yazısının noktalardan oluşan etkileşimli görünümü. Fareni gezdir, tıkla."></canvas></div>
+    </div>
+
+    <div class="pin wf" id="wfPin" role="img" aria-label="Tel kafes katmanlar kaydırdıkça açılıyor.">
+      <div class="pin-sticky">
+        <canvas id="wfCanvas" aria-hidden="true"></canvas>
+        <div class="wf-text" id="wfText"><small>Kaydır ve keşfet</small><h2>Kodla tasarlandı.<br>Kodla yayınlandı!</h2></div>
+      </div>
+    </div>
+
+    <div class="art" id="artPin" role="img" aria-label="Sanat sahnesi. Van Gogh üslubunda sekiz özgün tablo: Yıldızlı Boğaz, Ayçiçekleri, Buğday ve Servi, Gece Kahvesi, Badem Çiçekleri, Zeytinlik, Süsenler, Kapadokya’da Gece. Üzerlerine gelince canlanıyorlar. Sonra fırça darbelerine dağılıp gün batımında bir ağaç tablosuna dönüşüyorlar.">
+      <div class="pin-sticky">
+        <canvas id="artCanvas" aria-hidden="true"></canvas>
+        <div class="ar-intro" id="arIntro"><small>Atölye</small><h2>Sanat, teknoloji ile buluştu!</h2><p>Van Gogh’un fırçasından ilham alan sekiz tablo. Hepsi kodla çizildi.<br>Aşağı kaydır. Tabloların üzerine gel, canlansınlar.</p></div>
+        <div class="ar-cap l" id="arCap" aria-live="polite"><span class="ar-no" id="arNo"></span><h3 id="arT"></h3><p id="arD"></p><em>Üzerine gel, canlansın. Tıkla, fırça hızlansın.</em></div>
+        <div class="ar-word" id="arWord" aria-hidden="true"></div>
+        <div class="ar-end" id="arEnd"><h2>Her fikir bir tuval.</h2><p>Tasarım ve teknoloji aynı atölyede.</p><a class="btn solid" href="iletisim.html">Birlikte yaratalım</a></div>
+        <div class="ar-navs" id="arNavs">
+          <button class="ar-nav" id="arNavUp" type="button" aria-label="Önceki tabloya git"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button>
+          <div class="ls-bar" aria-hidden="true"><i id="arBar"></i></div>
+          <button class="ar-nav" id="arNavDown" type="button" aria-label="Sonraki tabloya git"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+        </div>
+      </div>
+    </div>
+  
+</main>
+
+<footer>
+  <div class="wrap">
+    <img class="foot-logo" src="vilkan-logo.png" alt="Vilkan Creative" width="720" height="62">
+    <div class="foot">
+      <ul>
+        <li><a href="tel:+905384411919">+90 538 441 19 19</a></li>
+        <li><a href="mailto:info@vilkan.com.tr">info@vilkan.com.tr</a></li>
+        <li><a href="https://www.instagram.com/vilkan.com.tr" target="_blank" rel="noopener">@vilkan.com.tr</a></li>
+      </ul>
+      <nav aria-label="Alt menü">
+        <a href="index.html">Ana Sayfa</a><a href="yapay-zeka.html">Yapay Zeka</a><a href="ajans.html">Ajans</a><a href="yazilim.html">Yazılım</a><a href="iletisim.html">İletişim</a>
+      </nav>
+    </div>
+    <div class="copy">© vilkan.com.tr</div>
+  </div>
+</footer>
+
+<script src="nav.js"></script><script src="home.js"></script>
+</body>
+</html>

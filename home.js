@@ -305,25 +305,60 @@
   var lm = { x: -9999, y: -9999, on: false }, lShock = [];
 
   var lMaskCache = null;
-  function buildLightMask() {
-    var MW = 640, MH = 200;
+  /* Maske, sahnenin en-boy oraninda uretilir. Sabit 640x200 maskeyi
+     izgaraya germek yaziyi mobilde eziyordu. */
+  function buildLightMask(aspect, cols, rows) {
+    var MW = 900, MH = Math.max(200, Math.round(MW / Math.max(0.5, aspect)));
     var mc = document.createElement('canvas'); mc.width = MW; mc.height = MH;
     var mg = mc.getContext('2d');
     mg.fillStyle = '#000'; mg.fillRect(0, 0, MW, MH);
-    mg.fillStyle = '#fff'; mg.textAlign = 'center'; mg.textBaseline = 'middle';
-    var fs = 150;
+    mg.fillStyle = '#fff'; mg.textAlign = 'left'; mg.textBaseline = 'alphabetic';
+
+    /* Noktasiz 'I' cizip \u0130'nin noktasini kendimiz koyuyoruz.
+       Fontun kendi noktasi izgaraya denk gelmeyip yarim kaliyordu. */
+    var WORD = 'VILKAN', DOT_AT = 1; // noktayi alacak harfin sirasi
+
+    var fs = 200;
     mg.font = '700 ' + fs + 'px Montserrat, system-ui, sans-serif';
-    var tw = mg.measureText('VİLKAN').width;
-    fs = Math.floor(fs * (MW * 0.86) / tw);
+    var tw = mg.measureText(WORD).width || 1;
+    fs = Math.floor(fs * (MW * 0.88) / tw);
     mg.font = '700 ' + fs + 'px Montserrat, system-ui, sans-serif';
-    mg.fillText('VİLKAN', MW / 2, MH * 0.52);
-    return { data: mg.getImageData(0, 0, MW, MH).data, w: MW, h: MH };
+
+    var m = mg.measureText(WORD);
+    var capH = m.actualBoundingBoxAscent || fs * 0.72;
+    var cellW = MW / cols, cellH = MH / rows;
+    // Govde + nokta + aralik dikeye sigmali.
+    var dotH = 2 * cellH, gap = capH * 0.16, block = capH + gap + dotH;
+    if (block > MH * 0.92) {
+      fs = Math.floor(fs * (MH * 0.92) / block);
+      mg.font = '700 ' + fs + 'px Montserrat, system-ui, sans-serif';
+      m = mg.measureText(WORD);
+      capH = m.actualBoundingBoxAscent || fs * 0.72;
+      gap = capH * 0.16; block = capH + gap + dotH;
+    }
+
+    var wordW = mg.measureText(WORD).width;
+    var x0 = (MW - wordW) / 2;
+    var baseline = (MH - block) / 2 + dotH + gap + capH;
+    mg.fillText(WORD, x0, baseline);
+
+    // Noktayi tam 2x2 hucreye oturt.
+    var xI = x0 + mg.measureText(WORD.slice(0, DOT_AT)).width
+                + mg.measureText(WORD.charAt(DOT_AT)).width / 2;
+    var yDot = baseline - capH - gap - dotH / 2;
+    var c0 = Math.max(0, Math.min(cols - 2, Math.round(xI / cellW) - 1));
+    var r0 = Math.max(0, Math.min(rows - 2, Math.round(yDot / cellH) - 1));
+    mg.fillRect(c0 * cellW, r0 * cellH, 2 * cellW, 2 * cellH);
+
+    return { data: mg.getImageData(0, 0, MW, MH).data, w: MW, h: MH, aspect: aspect, cols: cols, rows: rows };
   }
   function buildLightGrid() {
-    var w = lW, h = lH, cell = w < 620 ? 12 : (w < 1000 ? 15 : 17);
+    var w = lW, h = lH, cell = w < 620 ? 6 : (w < 1000 ? 11 : 15);
     lCols = Math.max(16, Math.round(w / cell)); lRows = Math.max(8, Math.round(h / cell));
     lCell = w / lCols;
-    if (!lMaskCache) lMaskCache = buildLightMask();
+    var aspect = w / h;
+    if (!lMaskCache || Math.abs(lMaskCache.aspect - aspect) > 0.02
+        || lMaskCache.cols !== lCols || lMaskCache.rows !== lRows) lMaskCache = buildLightMask(aspect, lCols, lRows);
     var mask = lMaskCache.data, mw = lMaskCache.w, mh = lMaskCache.h;
     lN = lCols * lRows;
     lgx = new Float32Array(lN); lgy = new Float32Array(lN); lon = new Float32Array(lN);
@@ -331,9 +366,17 @@
     var k = 0;
     for (var r = 0; r < lRows; r++) for (var c = 0; c < lCols; c++, k++) {
       lgx[k] = (c + 0.5) * lCell; lgy[k] = (r + 0.5) * (h / lRows);
-      var mx = Math.min(mw - 1, Math.floor((c + 0.5) / lCols * mw));
-      var my = Math.min(mh - 1, Math.floor((r + 0.5) / lRows * mh));
-      lon[k] = mask[(my * mw + mx) * 4] > 128 ? 1 : 0;
+      // Tek piksel yerine hucrenin tamamini orneklemek ince parcalari
+      // (İ'nin noktasi gibi) eksiksiz yakalar.
+      var hit = 0, tot = 0;
+      for (var sy = 0; sy < 3; sy++) for (var sx = 0; sx < 3; sx++) {
+        var fx = (c + (sx + 0.5) / 3) / lCols, fy = (r + (sy + 0.5) / 3) / lRows;
+        var mx = Math.min(mw - 1, Math.max(0, Math.floor(fx * mw)));
+        var my = Math.min(mh - 1, Math.max(0, Math.floor(fy * mh)));
+        if (mask[(my * mw + mx) * 4] > 128) hit++;
+        tot++;
+      }
+      lon[k] = (hit / tot) >= 0.34 ? 1 : 0;
     }
   }
   function resizeLight() {

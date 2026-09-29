@@ -90,10 +90,10 @@
   }
 
   function refresh(refreshToken) {
+    // Wix bu cagride snake_case bekliyor: refresh_token. camelCase sessizce reddediliyor.
     return postJson(TOKEN_URL, {
-      clientId: CLIENT_ID,
-      grantType: 'refresh_token',
-      refreshToken: refreshToken
+      refresh_token: refreshToken,
+      grantType: 'refresh_token'
     }).then(store);
   }
 

@@ -142,7 +142,9 @@
       statusEl.textContent = 'Randevu talebin bize ulaştı. En kısa sürede döneceğiz.';
     }).catch(function (err) {
       if (window.console && console.warn) console.warn('Wix form gönderimi başarısız:', err);
-      statusEl.textContent = 'Talep gönderilemedi, e-posta uygulaman açılıyor. Gönder\'e basarak talebi tamamla.';
+      // Hata kodunu ekranda gosteriyoruz ki tani icin DevTools gerekmesin.
+      var why = err && err.status ? ('HTTP ' + err.status) : 'baglanti hatasi';
+      statusEl.textContent = 'Talep gönderilemedi (' + why + '), e-posta uygulaman açılıyor. Gönder\'e basarak talebi tamamla.';
       mailtoFallback(v);
     }).then(function () {
       sending = false;

@@ -138,6 +138,7 @@
       first_name: name.first,
       last_name: name.last,
       company: values.firma,
+      email: values.eposta,
       phone: values.tel,
       position: values.unvan,
       preferred_date: values.tarih,

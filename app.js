@@ -90,26 +90,26 @@
     form.elements['tarih'].min = d.getFullYear() + '-' + m + '-' + day;
   })();
   function prefill(vals) {
-    ['ad', 'firma', 'tel', 'unvan', 'tarih', 'saat', 'mesaj'].forEach(function (k) {
+    ['ad', 'firma', 'eposta', 'tel', 'unvan', 'tarih', 'saat', 'mesaj'].forEach(function (k) {
       if (vals && typeof vals[k] === 'string' && vals[k]) form.elements[k].value = vals[k];
     });
   }
   (function () {
     var qp = new URLSearchParams(location.search), vals = {};
-    ['ad', 'firma', 'tel', 'unvan', 'tarih', 'saat', 'mesaj'].forEach(function (k) { var v = qp.get(k); if (v) vals[k] = v; });
+    ['ad', 'firma', 'eposta', 'tel', 'unvan', 'tarih', 'saat', 'mesaj'].forEach(function (k) { var v = qp.get(k); if (v) vals[k] = v; });
     prefill(vals);
   })();
   function values() {
     var f = form.elements;
     return {
-      ad: f['ad'].value, firma: f['firma'].value, tel: f['tel'].value, unvan: f['unvan'].value,
+      ad: f['ad'].value, firma: f['firma'].value, eposta: f['eposta'].value, tel: f['tel'].value, unvan: f['unvan'].value,
       tarih: f['tarih'].value, saat: f['saat'].value, mesaj: f['mesaj'].value
     };
   }
   // Wix'e ulaşılamazsa talep kaybolmasın: e-posta taslağı yedek yol.
   function mailtoFallback(v) {
     var body = [
-      'Ad soyad: ' + v.ad, 'Firma: ' + v.firma, 'Telefon: ' + v.tel,
+      'Ad soyad: ' + v.ad, 'Firma: ' + v.firma, 'E-posta: ' + v.eposta, 'Telefon: ' + v.tel,
       'Ünvan: ' + v.unvan, 'Tarih: ' + v.tarih, 'Saat: ' + v.saat, '', v.mesaj
     ].join('\n');
     window.location.href = 'mailto:info@vilkan.com.tr?subject=' + encodeURIComponent('Randevu talebi') + '&body=' + encodeURIComponent(body);
@@ -119,6 +119,7 @@
     first_name: { label: 'Ad soyad', input: 'ad' },
     last_name: { label: 'Ad soyad', input: 'ad' },
     company: { label: 'Firma adı', input: 'firma' },
+    email: { label: 'E-posta', input: 'eposta' },
     phone: { label: 'Telefon', input: 'tel' },
     position: { label: 'Ünvan', input: 'unvan' },
     preferred_date: { label: 'Tarih', input: 'tarih' },
@@ -132,6 +133,12 @@
     if (!v) return true;
     if (!/^[+()\-.\s0-9]+$/.test(v)) return false;
     return (v.replace(/\D/g, '').length >= 7);
+  }
+  // Wix e-postayi "email" formatinda dogruluyor; bos birakilabilir.
+  function emailLooksValid(value) {
+    var v = String(value || '').trim();
+    if (!v) return true;
+    return /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)+$/.test(v);
   }
   function focusField(name) {
     var el = form.elements[name];
@@ -147,6 +154,11 @@
     if (!f['ad'].value.trim() || !f['tarih'].value) {
       statusEl.textContent = 'Ad soyad ve tarih alanlarını doldur.';
       (f['ad'].value.trim() ? f['tarih'] : f['ad']).focus();
+      return;
+    }
+    if (!emailLooksValid(f['eposta'].value)) {
+      statusEl.textContent = 'E-posta adresi geçerli görünmüyor. Örnek: ad@firma.com';
+      focusField('eposta');
       return;
     }
     if (!phoneLooksValid(f['tel'].value)) {

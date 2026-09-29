@@ -112,7 +112,7 @@
           {
             name: 'prefillAppointment',
             description: 'Randevu formunu ziyaretçinin verdiği bilgilerle doldurur ve İletişim sayfasını açar. Bilgi uydurma, sadece verileni yaz.',
-            inputSchema: { type: 'object', properties: { ad: { type: 'string' }, firma: { type: 'string' }, tel: { type: 'string' }, unvan: { type: 'string' }, tarih: { type: 'string', description: 'YYYY-MM-DD' }, saat: { type: 'string', description: 'HH:MM' }, mesaj: { type: 'string' } } },
+            inputSchema: { type: 'object', properties: { ad: { type: 'string' }, firma: { type: 'string' }, eposta: { type: 'string' }, tel: { type: 'string' }, unvan: { type: 'string' }, tarih: { type: 'string', description: 'YYYY-MM-DD' }, saat: { type: 'string', description: 'HH:MM' }, mesaj: { type: 'string' } } },
             execute: function (i) { goToIletisim(i || {}); return 'Form dolduruldu. Ziyaretçi son kontrolü yapıp gönderecek.'; }
           }
         ]

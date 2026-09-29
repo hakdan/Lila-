@@ -154,6 +154,21 @@
     return out;
   }
 
+  // Wix'in dogrulama hatasi: details.validationError.fieldViolations[].data.errors[]
+  function readFieldErrors(parsed) {
+    var out = [];
+    try {
+      var violations = parsed.details.validationError.fieldViolations || [];
+      for (var i = 0; i < violations.length; i++) {
+        var errors = (violations[i].data && violations[i].data.errors) || [];
+        for (var j = 0; j < errors.length; j++) {
+          out.push({ path: errors[j].errorPath, type: errors[j].errorType, message: errors[j].errorMessage });
+        }
+      }
+    } catch (err) {}
+    return out;
+  }
+
   function postSubmission(accessToken, submissions) {
     return fetch(SUBMISSIONS_URL, {
       method: 'POST',
@@ -199,6 +214,9 @@
             var err2 = new Error('Wix ' + res.status + ': ' + (text || res.statusText));
             err2.status = res.status;
             err2.body = parsed;
+            // 400'de Wix hangi alanin reddedildigini soyluyor; cagirana iletiyoruz
+            // ki ziyaretciye "bir sey ters gitti" yerine alan adi gosterilebilsin.
+            err2.fieldErrors = readFieldErrors(parsed);
             throw err2;
           }
           var submission = (parsed && parsed.submission) || {};

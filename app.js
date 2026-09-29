@@ -114,6 +114,30 @@
     ].join('\n');
     window.location.href = 'mailto:info@vilkan.com.tr?subject=' + encodeURIComponent('Randevu talebi') + '&body=' + encodeURIComponent(body);
   }
+  // Wix alan anahtari -> formdaki Turkce etiket ve input adi
+  var FIELD_LABELS = {
+    first_name: { label: 'Ad soyad', input: 'ad' },
+    last_name: { label: 'Ad soyad', input: 'ad' },
+    company: { label: 'Firma adı', input: 'firma' },
+    phone: { label: 'Telefon', input: 'tel' },
+    position: { label: 'Ünvan', input: 'unvan' },
+    preferred_date: { label: 'Tarih', input: 'tarih' },
+    preferred_time: { label: 'Saat', input: 'saat' },
+    message: { label: 'Mesajın', input: 'mesaj' }
+  };
+  // Wix telefonu "phone" formatinda dogruluyor; bos birakilabilir ama
+  // doldurulduysa numara gibi gorunmeli, yoksa istek 400 ile geri doner.
+  function phoneLooksValid(value) {
+    var v = String(value || '').trim();
+    if (!v) return true;
+    if (!/^[+()\-.\s0-9]+$/.test(v)) return false;
+    return (v.replace(/\D/g, '').length >= 7);
+  }
+  function focusField(name) {
+    var el = form.elements[name];
+    if (el && typeof el.focus === 'function') el.focus();
+  }
+
   var submitBtn = form.querySelector('button[type="submit"]');
   var sending = false;
   form.addEventListener('submit', function (e) {
@@ -123,6 +147,11 @@
     if (!f['ad'].value.trim() || !f['tarih'].value) {
       statusEl.textContent = 'Ad soyad ve tarih alanlarını doldur.';
       (f['ad'].value.trim() ? f['tarih'] : f['ad']).focus();
+      return;
+    }
+    if (!phoneLooksValid(f['tel'].value)) {
+      statusEl.textContent = 'Telefon numarası geçerli görünmüyor. Örnek: +90 538 441 19 19';
+      focusField('tel');
       return;
     }
     var v = values();
@@ -142,7 +171,21 @@
       statusEl.textContent = 'Randevu talebin bize ulaştı. En kısa sürede döneceğiz.';
     }).catch(function (err) {
       if (window.console && console.warn) console.warn('Wix form gönderimi başarısız:', err);
-      // Hata kodunu ekranda gosteriyoruz ki tani icin DevTools gerekmesin.
+
+      // Alan dogrulama hatasi: ziyaretcinin duzeltebilecegi bir sey.
+      // Bunu iletim hatasi gibi gosterip e-posta acmak yanlis olur.
+      var fieldErrors = (err && err.fieldErrors) || [];
+      if (fieldErrors.length) {
+        var first = fieldErrors[0];
+        var known = FIELD_LABELS[first.path];
+        statusEl.textContent = known
+          ? (known.label + ' alanı geçerli değil. Kontrol edip tekrar gönder.')
+          : 'Girdiğin bilgilerden biri geçerli değil. Kontrol edip tekrar gönder.';
+        if (known) focusField(known.input);
+        return;
+      }
+
+      // Gercek iletim hatasi: talep kaybolmasin diye e-posta yedegi.
       var why = err && err.status ? ('HTTP ' + err.status) : 'baglanti hatasi';
       statusEl.textContent = 'Talep gönderilemedi (' + why + '), e-posta uygulaman açılıyor. Gönder\'e basarak talebi tamamla.';
       mailtoFallback(v);

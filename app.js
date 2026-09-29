@@ -81,7 +81,9 @@
      4) Randevu formu
      ========================================================= */
   var form = document.getElementById('appt');
-  var status = document.getElementById('status');
+  // NOT: 'status' adini kullanmayin - genel kapsamda window.status ile cakisir
+  // ve atanan element string'e cevrilir ('[object HTMLDivElement]').
+  var statusEl = document.getElementById('status');
   if (form) {
   (function () {
     var d = new Date(), m = ('0' + (d.getMonth() + 1)).slice(-2), day = ('0' + d.getDate()).slice(-2);
@@ -119,24 +121,28 @@
     if (sending) return;
     var f = form.elements;
     if (!f['ad'].value.trim() || !f['tarih'].value) {
-      status.textContent = 'Ad soyad ve tarih alanlarını doldur.';
+      statusEl.textContent = 'Ad soyad ve tarih alanlarını doldur.';
       (f['ad'].value.trim() ? f['tarih'] : f['ad']).focus();
       return;
     }
     var v = values();
 
-    if (!window.WixHeadless) { mailtoFallback(v); status.textContent = 'E-posta uygulaman açıldı. Gönder\'e basarak talebi tamamla.'; return; }
+    if (!window.WixHeadless) {
+      mailtoFallback(v);
+      statusEl.textContent = 'Bağlantı dosyası yüklenemedi, e-posta uygulaman açılıyor. Gönder\'e basarak talebi tamamla.';
+      return;
+    }
 
     sending = true;
     if (submitBtn) submitBtn.disabled = true;
-    status.textContent = 'Talebin gönderiliyor...';
+    statusEl.textContent = 'Talebin gönderiliyor...';
 
     window.WixHeadless.submitAppointment(v).then(function () {
       form.reset();
-      status.textContent = 'Randevu talebin bize ulaştı. En kısa sürede döneceğiz.';
+      statusEl.textContent = 'Randevu talebin bize ulaştı. En kısa sürede döneceğiz.';
     }).catch(function (err) {
       if (window.console && console.warn) console.warn('Wix form gönderimi başarısız:', err);
-      status.textContent = 'Talep gönderilemedi, e-posta uygulaman açılıyor. Gönder\'e basarak talebi tamamla.';
+      statusEl.textContent = 'Talep gönderilemedi, e-posta uygulaman açılıyor. Gönder\'e basarak talebi tamamla.';
       mailtoFallback(v);
     }).then(function () {
       sending = false;

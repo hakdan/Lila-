@@ -6,6 +6,8 @@
   function setOpen(open) {
     nav.classList.toggle('open', open);
     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    // Arka plan karartmasi CSS'te body.nav-open ile geliyor.
+    document.body.classList.toggle('nav-open', open);
   }
   btn.addEventListener('click', function (e) {
     e.stopPropagation();
@@ -13,6 +15,10 @@
   });
   document.addEventListener('click', function (e) {
     if (nav.classList.contains('open') && !nav.contains(e.target) && e.target !== btn) setOpen(false);
+  });
+  // Bir baglantiya basildiginda menu kapansin (ayni sayfaya gidilse de).
+  Array.prototype.forEach.call(nav.querySelectorAll('a'), function (a) {
+    a.addEventListener('click', function () { setOpen(false); });
   });
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && nav.classList.contains('open')) { setOpen(false); btn.focus(); }

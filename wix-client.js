@@ -191,6 +191,16 @@
    * @param {Object} values iletisim formundaki alanlar
    * @returns {Promise<{submissionId: string, contactId: string}>}
    */
+  // Telefon yuzunden talep kaybolmasin: Wix numarayi reddederse
+  // numarayi mesaja tasiyip telefon alani olmadan tekrar gonderiyoruz.
+  function withoutPhone(submissions, rawPhone) {
+    var retry = {};
+    Object.keys(submissions).forEach(function (k) { if (k !== 'phone') retry[k] = submissions[k]; });
+    var note = 'Telefon (doğrulanamadı): ' + rawPhone;
+    retry.message = retry.message ? (retry.message + '\n\n' + note) : note;
+    return retry;
+  }
+
   function submitAppointment(values) {
     var submissions = buildSubmission(values);
 
@@ -202,6 +212,19 @@
             clearTokens();
             return getAccessToken(true).then(function (fresh) {
               return postSubmission(fresh, submissions);
+            });
+          }
+          // Sadece telefon reddedildiyse: telefonsuz bir kez daha dene.
+          if (res.status === 400 && submissions.phone) {
+            return res.clone().text().then(function (text) {
+              var parsed = null;
+              try { parsed = text ? JSON.parse(text) : null; } catch (err) {}
+              var errs = readFieldErrors(parsed);
+              var onlyPhone = errs.length > 0 && errs.every(function (e) { return e.path === 'phone'; });
+              if (!onlyPhone) return res;
+              return getAccessToken(false).then(function (t2) {
+                return postSubmission(t2, withoutPhone(submissions, submissions.phone));
+              });
             });
           }
           return res;

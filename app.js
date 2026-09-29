@@ -90,19 +90,19 @@
     form.elements['tarih'].min = d.getFullYear() + '-' + m + '-' + day;
   })();
   function prefill(vals) {
-    ['ad', 'firma', 'eposta', 'tel', 'unvan', 'tarih', 'saat', 'mesaj'].forEach(function (k) {
+    ['ad', 'firma', 'eposta', 'ulke', 'tel', 'unvan', 'tarih', 'saat', 'mesaj'].forEach(function (k) {
       if (vals && typeof vals[k] === 'string' && vals[k]) form.elements[k].value = vals[k];
     });
   }
   (function () {
     var qp = new URLSearchParams(location.search), vals = {};
-    ['ad', 'firma', 'eposta', 'tel', 'unvan', 'tarih', 'saat', 'mesaj'].forEach(function (k) { var v = qp.get(k); if (v) vals[k] = v; });
+    ['ad', 'firma', 'eposta', 'ulke', 'tel', 'unvan', 'tarih', 'saat', 'mesaj'].forEach(function (k) { var v = qp.get(k); if (v) vals[k] = v; });
     prefill(vals);
   })();
   function values() {
     var f = form.elements;
     return {
-      ad: f['ad'].value, firma: f['firma'].value, eposta: f['eposta'].value, tel: f['tel'].value, unvan: f['unvan'].value,
+      ad: f['ad'].value, firma: f['firma'].value, eposta: f['eposta'].value, tel: composePhone(), unvan: f['unvan'].value,
       tarih: f['tarih'].value, saat: f['saat'].value, mesaj: f['mesaj'].value
     };
   }
@@ -126,13 +126,14 @@
     preferred_time: { label: 'Saat', input: 'saat' },
     message: { label: 'Mesajın', input: 'mesaj' }
   };
-  // Wix telefonu "phone" formatinda dogruluyor; bos birakilabilir ama
-  // doldurulduysa numara gibi gorunmeli, yoksa istek 400 ile geri doner.
-  function phoneLooksValid(value) {
-    var v = String(value || '').trim();
-    if (!v) return true;
-    if (!/^[+()\-.\s0-9]+$/.test(v)) return false;
-    return (v.replace(/\D/g, '').length >= 7);
+  // Telefon gonderimi ASLA engellemez. Numara alani sadece rakam alir,
+  // ulke kodu ayri secilir; Wix yine de reddederse istemci telefonsuz tekrar dener.
+  function digitsOnly(value) { return String(value || '').replace(/\D/g, ''); }
+  function composePhone() {
+    var d = digitsOnly(form.elements['tel'].value);
+    if (!d) return '';
+    var cc = form.elements['ulke'] ? form.elements['ulke'].value : '';
+    return cc ? (cc + ' ' + d) : d;
   }
   // Wix e-postayi "email" formatinda dogruluyor; bos birakilabilir.
   function emailLooksValid(value) {
@@ -144,6 +145,15 @@
     var el = form.elements[name];
     if (el && typeof el.focus === 'function') el.focus();
   }
+
+  (function () {
+    var tel = form.elements['tel'];
+    if (!tel) return;
+    tel.addEventListener('input', function () {
+      var d = digitsOnly(tel.value);
+      if (tel.value !== d) tel.value = d;
+    });
+  })();
 
   var submitBtn = form.querySelector('button[type="submit"]');
   var sending = false;
@@ -159,11 +169,6 @@
     if (!emailLooksValid(f['eposta'].value)) {
       statusEl.textContent = 'E-posta adresi geçerli görünmüyor. Örnek: ad@firma.com';
       focusField('eposta');
-      return;
-    }
-    if (!phoneLooksValid(f['tel'].value)) {
-      statusEl.textContent = 'Telefon numarası geçerli görünmüyor. Örnek: +90 538 441 19 19';
-      focusField('tel');
       return;
     }
     var v = values();

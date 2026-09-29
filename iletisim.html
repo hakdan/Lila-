@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=f6e235ea">
+<link rel="stylesheet" href="styles.css?v=6381c4ee">
 </head>
 <body>
 <canvas id="stage" aria-hidden="true"></canvas>
@@ -62,7 +62,50 @@
           <label>Ad soyad<input name="ad" type="text" autocomplete="name" required></label>
           <label>Firma adı<input name="firma" type="text" autocomplete="organization"></label>
           <label class="full">E-posta<input name="eposta" type="email" autocomplete="email" inputmode="email" spellcheck="false"></label>
-          <label>Telefon<input name="tel" type="tel" autocomplete="tel"></label>
+          <label>Telefon
+            <span class="tel-row">
+              <select name="ulke" aria-label="Ülke kodu">
+              <option value="+90" selected>+90 Türkiye</option>
+              <option value="+372">+372 Estonya</option>
+              <option value="+1">+1 ABD / Kanada</option>
+              <option value="+49">+49 Almanya</option>
+              <option value="+43">+43 Avusturya</option>
+              <option value="+61">+61 Avustralya</option>
+              <option value="+994">+994 Azerbaycan</option>
+              <option value="+32">+32 Belçika</option>
+              <option value="+971">+971 BAE</option>
+              <option value="+44">+44 Birleşik Krallık</option>
+              <option value="+359">+359 Bulgaristan</option>
+              <option value="+420">+420 Çekya</option>
+              <option value="+86">+86 Çin</option>
+              <option value="+45">+45 Danimarka</option>
+              <option value="+358">+358 Finlandiya</option>
+              <option value="+33">+33 Fransa</option>
+              <option value="+995">+995 Gürcistan</option>
+              <option value="+91">+91 Hindistan</option>
+              <option value="+31">+31 Hollanda</option>
+              <option value="+964">+964 Irak</option>
+              <option value="+34">+34 İspanya</option>
+              <option value="+46">+46 İsveç</option>
+              <option value="+41">+41 İsviçre</option>
+              <option value="+39">+39 İtalya</option>
+              <option value="+81">+81 Japonya</option>
+              <option value="+974">+974 Katar</option>
+              <option value="+357">+357 Kıbrıs</option>
+              <option value="+965">+965 Kuveyt</option>
+              <option value="+36">+36 Macaristan</option>
+              <option value="+20">+20 Mısır</option>
+              <option value="+47">+47 Norveç</option>
+              <option value="+48">+48 Polonya</option>
+              <option value="+40">+40 Romanya</option>
+              <option value="+7">+7 Rusya</option>
+              <option value="+966">+966 Suudi Arabistan</option>
+              <option value="+380">+380 Ukrayna</option>
+              <option value="+30">+30 Yunanistan</option>
+              </select>
+              <input name="tel" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="5xx xxx xx xx" aria-label="Telefon numarası">
+            </span>
+          </label>
           <label>Ünvan<input name="unvan" type="text" autocomplete="organization-title"></label>
           <label>Tarih<input name="tarih" type="date" required></label>
           <label>Saat<input name="saat" type="time"></label>
@@ -96,7 +139,7 @@
 </footer>
 
 <script src="nav.js?v=7c8df4b6"></script><script src="bg.js?v=8d04161f"></script>
-<script src="wix-client.js?v=b53de261"></script>
-<script src="app.js?v=9d5370cd"></script>
+<script src="wix-client.js?v=83a83880"></script>
+<script src="app.js?v=dfb16a0f"></script>
 </body>
 </html>
